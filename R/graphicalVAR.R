@@ -33,7 +33,7 @@ graphicalVAR <-
     dayvar,
     idvar,
     lags = 1,
-    centerWithin = TRUE,
+    centerWithin = TRUE, dir = dir,
     likelihood = c("unpenalized","penalized") # compute likelihood based on unpenalized (sparseTSCGM 2.3) or penalized (sparseTSCGM 2.5) contemporaneous effects
   ){
     
@@ -47,7 +47,7 @@ graphicalVAR <-
       }
     }
     
-    # If list:
+    # If list: | mlgvclust == TRUE
     if (is.list(data) && !is.data.frame(data)){
       if (!("data_c" %in% names(data) & "data_l" %in% names(data))){
         stop("'data_c' and 'data_l' must be contained in 'data'")
@@ -185,6 +185,9 @@ graphicalVAR <-
         tryres <- try(Rothmana(data_l, data_c, lambdas$beta[i],lambdas$kappa[i], gamma=gamma,maxit.in=maxit.in, maxit.out = maxit.out,
                                penalize.diagonal = penalize.diagonal,
                                mimic = mimic, likelihood = likelihood)  )
+        # write.table(tryres$EBIC, file = paste(dir, '/graphical VAR/EBIC for ', gamma,'.csv', sep = ''), 
+        #             sep = ',', append = TRUE)
+        
         if (is(tryres,"try-error")){
           Estimates[[i]] <- list(beta=matrix(NA,Nvar,Nvar+1), kappa=matrix(NA,Nvar,Nvar), EBIC = Inf,
                                  error = tryres)

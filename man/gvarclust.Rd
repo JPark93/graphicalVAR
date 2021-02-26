@@ -1,89 +1,98 @@
-\name{graphicalVAR}
-\alias{graphicalVAR}
+\name{gvarclust}
+\alias{gvarclust}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Estimate the graphical VAR model.
+Utilize subgrouping features for chain graphical VAR models.
 }
 \description{
-Estimates the graphical VAR (Wild et al., 2010) model through LASSO estimation coupled with extended Bayesian information criterion for choosing the optimal tuning parameters. The estimation procedure is outlined by Rothman, Levina and Zhu (2010) and is further described by Abegaz and Wit (2013). The procedure here is based on the work done in the R package SparseTSCGM (Abegaz and Wit, 2014).
+Estimates the subgrouped chain graphical VAR model through LASSO estimation coupled with extended Bayesian information criterion for choosing the optimal tuning parameters. The estimation procedure makes use of community detection procedures to identify homogeneous subgroups of individuals prior to fitting a chain graphical VAR model to the data.
 }
 \usage{
-graphicalVAR(data, nLambda = 50, verbose = TRUE, gamma = 0.5, scale
-                   = TRUE, lambda_beta, lambda_kappa, maxit.in = 100,
-                   maxit.out = 100, deleteMissings = TRUE,
-                   penalize.diagonal = TRUE, lambda_min_kappa = 0.05,
-                   lambda_min_beta = lambda_min_kappa, mimic =
-                   c("current", "0.1.2", "0.1.4", "0.1.5", "0.2"), vars,
-                   beepvar, dayvar, idvar, lags = 1, centerWithin = TRUE,
-                   dir = dir, likelihood = c("unpenalized", "penalized"))
+gvarclust(data, vars, idvar, beepvar, dayvar, search = TRUE,
+                    scale = TRUE, maxit.in, centerWithin = TRUE, gamma =
+                    0.5, verbose = TRUE, redo = FALSE, subjectNetworks =
+                    TRUE, lambda_min_kappa_fixed = 0.001,
+                    lambda_min_beta_fixed = 0.001, lambda_min_kappa =
+                    0.05, lambda_min_beta = lambda_min_kappa,
+                    lambda_min_glasso = 0.01, dir = getwd(), btwnNetworks
+                    = FALSE, mlgvclust = TRUE, indplot = FALSE, elim.groups, g.ID = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{data}{
 A matrix or data frame containing repeated measures (rows) on a set of variables (columns). Must not contain missing data.
 }
-  \item{nLambda}{
-The number of both lambda parameters to test. Defaults to 50, which results in 2500 models to evaluate.
+\item{vars}{
+Vectors of variables to include in the analysis
 }
-  \item{verbose}{
-Logical, should a progress bar be printed to the console?
+  \item{idvar}{
+ID variable.
 }
-  \item{gamma}{
-The EBIC hyper-parameter. Set to 0 to use regular BIC.
+  \item{beepvar}{
+Idk, honestly.
+}
+  \item{dayvar}{
+The day variable indicator  
+}
+  \item{search}{
+Set to TRUE to search the adjacency matrix using a conductance optimization procedure. Set to FALSE if you would like to use the default procedure used by S-GIMME (Gates et al., 2017) which subtracts the minimum value. Conductance is more liberal with cluster identification.
 }
 \item{scale}{
 Logical, should responses be standardized before estimation?
 }
-  \item{lambda_beta}{
-An optional vector of lambda_beta values to test. Set \code{lambda_beta = 0} argument and \code{lambda_kappa = 0} for unregularized estimation.
-}
-  \item{lambda_kappa}{
-An optional vector of lambda_kappa values to test. Set \code{lambda_beta = 0} argument and \code{lambda_kappa = 0} for unregularized estimation.
-}
   \item{maxit.in}{
 Maximum number of iterations in the inner loop (computing beta)
 }
-  \item{maxit.out}{
-  Maximum number of iterations in the outer loop
-  }
-  \item{deleteMissings}{
-    Logical, should missing responses be deleted?
-  }
-  \item{penalize.diagonal}{
-  Logical, should the diagonal of beta be penalized (i.e., penalize auto-regressions)?
-  }
+\item{centerWithin}{
+Logical, should subject data be within-person centered before estimating fixed effects?
+}
+  \item{gamma}{
+The EBIC hyper-parameter. Set to 0 to use regular BIC.
+}
+\item{verbose}{
+Do you want all the info?
+}
+\item{redo}{
+Test function currently under works.
+}
+\item{subjectNetworks}{
+  Do you want N = 1 networks?
+}
+\item{lambda_min_kappa_fixed}{
+Minimum lambda value for the precision matrix in the fixed effects network
+}
+\item{lambda_min_beta_fixed}{
+Minimum lambda value for the regression matrix in the fixed effects network
+}
   \item{lambda_min_kappa}{
       Multiplier of maximal tuning parameter for kappa
   }
     \item{lambda_min_beta}{
       Multiplier of maximal tuning parameter for beta
   }
-  \item{mimic}{
-      Allows one to mimic earlier versions of graphicalVAR
-  }
-\item{vars}{
-Vectors of variables to include in the analysis
-}
-\item{beepvar}{
-String indicating assessment beep per day (if missing, is added). Adding this argument will cause non-consecutive beeps to be treated as missing!
-}
-  \item{dayvar}{
-String indicating assessment day. Adding this argument makes sure that the first measurement of a day is not regressed on the last measurement of the previous day. IMPORTANT: only add this if the data has multiple observations per day.
-}
-  \item{idvar}{
-String indicating the subject ID
-}
-\item{lags}{
-Vector of lags to include
-}
-\item{centerWithin}{
-Logical, should subject data be within-person centered before estimating fixed effects?
-}
-\item{likelihood}{
-Should likelihood be computed based on penalized contemporaneous matrix or unpenalized contemporaneous matrix. Set to \code{"penalized"} to mimic version 2.5 and later of \code{sparseTSCGM}.
+\item{lambda_min_glasso}{
+idk
 }
 \item{dir}{
-Where do you want your files saved.
+The directory where you want your files saved. Should be a path and a folder will be created called graphical VAR
+}
+\item{btwnNetworks}{
+Do you want the between subjects networks generated? Set to FALSE by default to save on estimation time.
+}
+\item{mlgvclust}{
+  Test function.
+}
+\item{indplot}{
+ Do you want individual plots? Set to FALSE due to issues plotting individuals with empty lagged and contemporaneous networks.
+}
+\item{elim.groups}{
+ Do you want the similarity matrices to remove the group-level information?
+}
+\item{g.ID}{
+ Is there a confirmatory group structure? Currently does not function.
+}
+  \item{\dots}{
+Arguments sent to \code{\link{graphicalVAR}}
 }
 }
 \details{
@@ -149,7 +158,6 @@ Data <- graphicalVARsim(100,Mod$beta,Mod$kappa)
 # Estimate model:
 Res <- graphicalVAR(Data, gamma = 0, nLambda = 10)
 
-\donttest{
 # Plot results:
 layout(t(1:2))
 plot(Mod, "PCC", layout = "circle")
@@ -157,5 +165,4 @@ plot(Res, "PCC", layout = "circle")
 
 plot(Mod, "PDC", layout = "circle")
 plot(Res, "PDC", layout = "circle")
-}
 }

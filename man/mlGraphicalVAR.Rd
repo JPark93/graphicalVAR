@@ -8,12 +8,13 @@ Pooled and individual graphical VAR estimation
 This function fits fixed effect temporal and contemporaneous networks over multiple subjects and runs separate graphical VAR models per subject. The algorithm does: (1) pool all data, within-subject center variables and run \code{\link{graphicalVAR}} to obtain fixed effects, (2) run \code{\link[qgraph]{EBICglasso}} on subject means to obtain a between-subjects network, (3) run \code{\link{graphicalVAR}} on data of every subject to obtain individual networks.  See arxiv.org/abs/1609.04156 for more details.
 }
 \usage{
-mlGraphicalVAR(data, vars, beepvar, dayvar, idvar, scale = TRUE, 
-              centerWithin = TRUE, gamma = 0.5, verbose = TRUE, 
-              subjectNetworks = TRUE, lambda_min_kappa_fixed = 0.001, 
-              lambda_min_beta_fixed = 0.001, lambda_min_kappa = 0.05, 
-              lambda_min_beta = lambda_min_kappa, lambda_min_glasso = 0.01, 
-              ...)
+mlGraphicalVAR(data, vars, beepvar, dayvar, idvar, scale = TRUE,
+                    centerWithin = TRUE, gamma = 0.5, verbose = TRUE,
+                    subjectNetworks = TRUE, btwnNetworks = FALSE, redo =
+                    FALSE, lambda_min_kappa_fixed = 0.001,
+                    lambda_min_beta_fixed = 0.001, lambda_min_kappa =
+                    0.05, lambda_min_beta = lambda_min_kappa,
+                    lambda_min_glasso = 0.01, mlgvclust = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -59,6 +60,15 @@ Multiplier of maximal tuning parameter
 }
   \item{lambda_min_glasso}{
 Multiplier of maximal tuning parameter
+}
+  \item{btwnNetworks}{
+Do you want Between Subjects Networks run. Defaults to FALSE
+}
+  \item{redo}{
+Leave this alone.
+}
+  \item{mlgvclust}{
+Leave this alone.
 }
   \item{\dots}{
 Arguments sent to \code{\link{graphicalVAR}}
